@@ -18,7 +18,7 @@ there. Project-specific rules stay in each project.
 /plugin install product-owner@mikes-skills
 ```
 
-Private repo: your `gh`/git credentials are used automatically.
+The repo is public, so no token is involved.
 
 ## Use in CI
 
@@ -30,10 +30,11 @@ plugin_marketplaces: "https://github.com/mikeguzman/agent-skills.git"
 plugins: "product-owner@mikes-skills"
 ```
 
-Because this repo is private and lives under a different owner than the
-repos that use it, the job needs read access to it: either make this repo
-public (it holds no secrets) or pass a `github_token` with read access —
-decide on the first real run.
+**This repo is public on purpose.** A workflow runs with its own org's
+GitHub App token, which cannot read a private repo under a different
+owner — measured on 2026-09-19, the runner failed with *"Failed to clone
+marketplace repository"*. A private marketplace would need a cross-owner
+token per organization; public needs none and works from every one.
 
 ## Where this fits
 
