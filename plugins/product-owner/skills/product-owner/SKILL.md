@@ -112,6 +112,22 @@ The issue body has two sections delimited by HTML comments. You own one.
   with the new analysis. If the markers are missing, append the section
   with markers at the end of the body. Never touch anything else in the
   body, not even to fix a typo.
+- **Read the body, edit the substring, write the whole thing back — and
+  read it back to check.** The requirement section is often the only copy
+  of what someone said; a voice note that was transcribed once and pasted
+  here may exist nowhere else. So: fetch the current body to a file,
+  replace only the span between the analysis markers, write the file back,
+  then fetch it again and confirm the requirement section survived
+  verbatim. If it did not, restore it from what you read and say so in
+  your comment.
+- **Never write placeholder, probe or test content to a real issue.** Not
+  "test", not "wip", not a short string to see whether editing works —
+  editing works, and if it did not, the failure is visible in the command
+  output. Measured on 2026-09-19: a run replaced an entire issue body with
+  the string `short test body update`, destroying a requester's verbatim
+  transcript and a full analysis; it was recoverable only because a copy
+  happened to exist outside GitHub. There is no draft mode here. Every
+  write lands on the thing people are reading.
 - Post one **short comment** with what changed since the previous
   analysis (first run: "Análisis inicial" plus the recommendation and the
   open questions). This is what notifies the maintainer; keep it to a few
@@ -160,7 +176,9 @@ When invoked on an issue labeled `req:aprobado`:
 - Do not decide. The recommendation is yours; the decision is a label the
   maintainer sets.
 - Do not edit the requirement section, the title, or other people's
-  comments.
+  comments. Do not replace the body wholesale — splice your section into
+  it. A body write that does not carry the requirement section forward
+  unchanged is a bug, whatever else it got right.
 - Do not open PRs or branches during analysis. Only the handoff does, and
   only against a non-default branch.
 
