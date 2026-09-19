@@ -61,8 +61,15 @@ jobs:
           # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           plugin_marketplaces: "https://github.com/mikeguzman/agent-skills.git"
           plugins: "product-owner@mikes-skills"
+          # The skill reads plans and journals against the DEFAULT BRANCH, so
+          # `git fetch` and `git show origin/main:<path>` must be allowed.
+          # Measured 2026-09-19: leaving them out made a run finish with
+          # permission_denials_count: 4, write nothing at all, and still
+          # report success — a silent no-op is the worst failure shape here.
+          claude_args: >-
+            --allowedTools "Bash(gh issue view *),Bash(gh issue edit *),Bash(gh issue comment *),Bash(gh pr view *),Bash(gh api *),Bash(gh label list *),Bash(git fetch *),Bash(git show *),Bash(git log *),Bash(git grep *),Bash(git diff *),Bash(git ls-files *),Bash(git rev-parse *),Bash(git branch *),Read,Grep,Glob"
           prompt: |
-            Use the product-owner skill on issue #${{ github.event.issue.number }} of ${{ github.repository }}.
+            Use the product-owner skill on issue #${{ github.event.issue.number || inputs.issue }} of ${{ github.repository }}.
             Event: ${{ github.event_name }}${{ github.event.label && format(' (label: {0})', github.event.label.name) || '' }}.
             If the issue carries the label req:aprobado, do the handoff described in the skill; otherwise do the analysis.
-            Read the issue and all its comments through the GitHub tools before writing anything.
+            Use the gh CLI (GH_TOKEN is set) to read the issue and its comments, to edit the issue body, to comment and to change labels.
