@@ -2,11 +2,19 @@
 # requirement issues (labels req:analizar / req:aprobado, body sections
 # <!-- requerimiento --> and <!-- analisis -->).
 #
-# What it does: when an issue gets the `req:analizar` label, or a person
-# comments on an issue that carries any `req:*` label, Claude Code runs the
-# product-owner skill against the checked-out repo and writes its analysis
+# What it does: when an issue gets the `req:analizar` label, Claude Code runs
+# the product-owner skill against the checked-out repo and writes its analysis
 # into the issue. When an issue gets `req:aprobado`, the same skill does the
 # handoff: adds the task to the repo's plan on a branch and opens a PR.
+#
+# ON DEMAND, NOT ON EVERY COMMENT. It used to fire on any human comment on a
+# `req:*` issue too, so every answer to an open question paid for a full
+# re-analysis. Measured 2026-09-19 on the first three real requirements: a
+# run costs USD 0.71 to 4.17 (22 to 77 turns), and a failed run that wrote
+# nothing still cost 0.71; the three analyses left nine open questions.
+# Answer as many comments as you like for free, then re-run: the agent
+# removes `req:analizar` when it finishes, so putting it back is the
+# "analyze again" button.
 #
 # Prerequisites in the repo: the Claude Code GitHub App installed
 # (`/install-github-app` from a Claude Code session), which also creates
@@ -40,16 +48,15 @@ concurrency:
 jobs:
   analyze:
     if: >-
-      (
+      github.event_name == 'workflow_dispatch' || (
         github.event_name == 'issues' &&
         (github.event.label.name == 'req:analizar' || github.event.label.name == 'req:aprobado')
-      ) || (
-        github.event_name == 'issue_comment' &&
-        !github.event.issue.pull_request &&
-        github.event.comment.user.type != 'Bot' &&
-        contains(join(github.event.issue.labels.*.name, ','), 'req:')
       )
     runs-on: ubuntu-latest
+    # Without this a hung run reaches GitHub's six-hour cap, burning the
+    # subscription with nothing to show. The longest real run measured was
+    # 20 minutes, so 30 leaves room and still cuts.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
