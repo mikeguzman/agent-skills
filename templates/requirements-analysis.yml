@@ -60,7 +60,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           plugin_marketplaces: "https://github.com/mikeguzman/agent-skills.git"
-          plugins: "product-owner@agent-skills"
+          plugins: "product-owner@mikes-skills"
           prompt: |
             Use the product-owner skill on issue #${{ github.event.issue.number }} of ${{ github.repository }}.
             Event: ${{ github.event_name }}${{ github.event.label && format(' (label: {0})', github.event.label.name) || '' }}.

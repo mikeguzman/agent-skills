@@ -1,6 +1,8 @@
 {
-  "name": "agent-skills",
-  "owner": { "name": "Maikol Guzmán Alán" },
+  "name": "mikes-skills",
+  "owner": {
+    "name": "Maikol Guzmán Alán"
+  },
   "plugins": [
     {
       "name": "product-owner",

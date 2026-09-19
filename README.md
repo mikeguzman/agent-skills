@@ -15,7 +15,7 @@ there. Project-specific rules stay in each project.
 
 ```
 /plugin marketplace add mikeguzman/agent-skills
-/plugin install product-owner@agent-skills
+/plugin install product-owner@mikes-skills
 ```
 
 Private repo: your `gh`/git credentials are used automatically.
@@ -27,7 +27,7 @@ Copy `templates/requirements-analysis.yml` into a repo's
 
 ```yaml
 plugin_marketplaces: "https://github.com/mikeguzman/agent-skills.git"
-plugins: "product-owner@agent-skills"
+plugins: "product-owner@mikes-skills"
 ```
 
 Because this repo is private and lives under a different owner than the
@@ -43,6 +43,14 @@ documented in the "Del Voicenote al Plan" design (2026-09-19). This repo
 is the *method* layer of that design; the intake lives in
 `mikes-brain-mcp`, the runtime workflow and the plan handoff live in each
 target repo.
+
+## Naming
+
+The marketplace is called **`mikes-skills`**, not `agent-skills` like the
+repo: Claude Code reserves names matching official Anthropic marketplaces
+and rejects them with *"The name 'agent-skills' is reserved for official
+Anthropic marketplaces"*. Repo name and marketplace name are independent —
+callers use the `name` field in `.claude-plugin/marketplace.json`.
 
 ## Writing a skill here
 
