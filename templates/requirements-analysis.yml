@@ -7,14 +7,15 @@
 # into the issue. When an issue gets `req:aprobado`, the same skill does the
 # handoff: adds the task to the repo's plan on a branch and opens a PR.
 #
-# ON DEMAND, NOT ON EVERY COMMENT. It used to fire on any human comment on a
-# `req:*` issue too, so every answer to an open question paid for a full
-# re-analysis. Measured 2026-09-19 on the first three real requirements: a
-# run costs USD 0.71 to 4.17 (22 to 77 turns), and a failed run that wrote
-# nothing still cost 0.71; the three analyses left nine open questions.
-# Answer as many comments as you like for free, then re-run: the agent
-# removes `req:analizar` when it finishes, so putting it back is the
-# "analyze again" button.
+# ON DEMAND, NOT ON EVERY COMMENT. It used to also fire on any human comment
+# on a `req:*` issue, which meant every answer to an open question paid for a
+# full re-analysis. Measured 2026-09-19 on the first three real requirements:
+# one run costs USD 0.71 to 4.17 (22 to 77 turns), and a failed run that
+# wrote nothing still cost 0.71. Answering nine questions one at a time would
+# have been nine runs. Now you answer as many comments as you like for free,
+# and re-run when you are done: the agent removes `req:analizar` when it
+# finishes, so putting it back is the "analyze again" button. To re-run
+# without touching labels, use the manual dispatch below.
 #
 # Prerequisites in the repo: the Claude Code GitHub App installed
 # (`/install-github-app` from a Claude Code session), which also creates
@@ -23,17 +24,31 @@
 # The marketplace below is a private repo: either make it public or give
 # the job a token that can read it — see the README.
 #
-# Status: UNTESTED until its first real run. The label-triggered form of
-# the action is not among the documented examples; the first run confirms
-# it. Keep this comment until then.
+# Marketplace name is `mikes-skills`, not the repo name: Claude Code
+# reserves names matching official Anthropic marketplaces.
+#
+# Status: UNTESTED until its first real run — and it cannot be tested
+# before merging: a workflow only runs from the default branch, so both
+# `workflow_dispatch` (404: not found on the default branch) and
+# `issues: labeled` are unavailable on a feature branch. This file is
+# inert until an issue carries a `req:*` label, which is what makes
+# merging it unproven acceptable. Keep this comment until it has run.
+
+# This file is the canonical copy: the one running in a target repo should
+# be identical to it. It drifted once (2026-09-19) and the template silently
+# lost a fix the live copy already had.
 
 name: Requirements analysis
 
 on:
   issues:
     types: [labeled]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "Issue number to analyze (re-run without toggling labels)"
+        required: true
+        type: string
 
 permissions:
   contents: write        # handoff opens a branch
@@ -42,7 +57,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: requirements-${{ github.event.issue.number }}
+  group: requirements-${{ github.event.issue.number || inputs.issue }}
   cancel-in-progress: false
 
 jobs:
@@ -53,9 +68,10 @@ jobs:
         (github.event.label.name == 'req:analizar' || github.event.label.name == 'req:aprobado')
       )
     runs-on: ubuntu-latest
-    # Without this a hung run reaches GitHub's six-hour cap, burning the
-    # subscription with nothing to show. The longest real run measured was
-    # 20 minutes, so 30 leaves room and still cuts.
+    # Sin esto, una corrida colgada llega al tope de GitHub — seis horas —
+    # gastando suscripción todo el rato, y nadie se entera. La más larga
+    # medida el 2026-09-19 fue de 20 minutos (77 turnos, USD 4,17) sobre el
+    # requerimiento más grande de los tres, así que 30 deja margen y corta.
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -70,13 +86,14 @@ jobs:
           plugins: "product-owner@mikes-skills"
           # The skill reads plans and journals against the DEFAULT BRANCH, so
           # `git fetch` and `git show origin/main:<path>` must be allowed.
-          # Measured 2026-09-19: leaving them out made a run finish with
-          # permission_denials_count: 4, write nothing at all, and still
-          # report success — a silent no-op is the worst failure shape here.
+          # Measured 2026-09-19 on issue #190: without them the run ended with
+          # permission_denials_count: 4, wrote nothing, and still reported
+          # success — a silent no-op is the worst failure shape here.
           claude_args: >-
             --allowedTools "Bash(gh issue view *),Bash(gh issue edit *),Bash(gh issue comment *),Bash(gh pr view *),Bash(gh api *),Bash(gh label list *),Bash(git fetch *),Bash(git show *),Bash(git log *),Bash(git grep *),Bash(git diff *),Bash(git ls-files *),Bash(git rev-parse *),Bash(git branch *),Read,Grep,Glob"
           prompt: |
             Use the product-owner skill on issue #${{ github.event.issue.number || inputs.issue }} of ${{ github.repository }}.
             Event: ${{ github.event_name }}${{ github.event.label && format(' (label: {0})', github.event.label.name) || '' }}.
-            If the issue carries the label req:aprobado, do the handoff described in the skill; otherwise do the analysis.
             Use the gh CLI (GH_TOKEN is set) to read the issue and its comments, to edit the issue body, to comment and to change labels.
+            If the issue carries the label req:aprobado, do the handoff described in the skill; otherwise do the analysis.
+            Read the issue and all its comments through the GitHub tools before writing anything.
