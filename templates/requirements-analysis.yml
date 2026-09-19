@@ -1,0 +1,67 @@
+# Requirements analysis — copy to .github/workflows/ in a repo that receives
+# requirement issues (labels req:analizar / req:aprobado, body sections
+# <!-- requerimiento --> and <!-- analisis -->).
+#
+# What it does: when an issue gets the `req:analizar` label, or a person
+# comments on an issue that carries any `req:*` label, Claude Code runs the
+# product-owner skill against the checked-out repo and writes its analysis
+# into the issue. When an issue gets `req:aprobado`, the same skill does the
+# handoff: adds the task to the repo's plan on a branch and opens a PR.
+#
+# Prerequisites in the repo: the Claude Code GitHub App installed
+# (`/install-github-app` from a Claude Code session), and ONE of
+# ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN as a repository secret.
+# The marketplace below is a private repo: either make it public or give
+# the job a token that can read it — see the README.
+#
+# Status: UNTESTED until its first real run. The label-triggered form of
+# the action is not among the documented examples; the first run confirms
+# it. Keep this comment until then.
+
+name: Requirements analysis
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write        # handoff opens a branch
+  issues: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: requirements-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    if: >-
+      (
+        github.event_name == 'issues' &&
+        (github.event.label.name == 'req:analizar' || github.event.label.name == 'req:aprobado')
+      ) || (
+        github.event_name == 'issue_comment' &&
+        !github.event.issue.pull_request &&
+        github.event.comment.user.type != 'Bot' &&
+        contains(join(github.event.issue.labels.*.name, ','), 'req:')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: "https://github.com/mikeguzman/agent-skills.git"
+          plugins: "product-owner@agent-skills"
+          prompt: |
+            Use the product-owner skill on issue #${{ github.event.issue.number }} of ${{ github.repository }}.
+            Event: ${{ github.event_name }}${{ github.event.label && format(' (label: {0})', github.event.label.name) || '' }}.
+            If the issue carries the label req:aprobado, do the handoff described in the skill; otherwise do the analysis.
+            Read the issue and all its comments through the GitHub tools before writing anything.

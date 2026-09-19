@@ -1,0 +1,11 @@
+{
+  "name": "agent-skills",
+  "owner": { "name": "Maikol Guzmán Alán" },
+  "plugins": [
+    {
+      "name": "product-owner",
+      "source": "./plugins/product-owner",
+      "description": "Analyze a requirement that arrived as a GitHub issue against the repo's own plans, code and rules, and hand an approved one into the repo's plan."
+    }
+  ]
+}
