@@ -80,11 +80,44 @@ is the shape of the output.
 5. **Size and risk.** S, M or L with a one-line reason each for size, the
    main risk, and any dependency it waits on. Never estimate in hours or
    days.
-6. **Questions.** Only questions whose answer changes the design or the
-   size. Split them: *for the maintainer* (technical or priority calls)
-   and *for the requester* (what they actually need, edge cases they have
-   seen). Never ask what the repo already answers, and never repeat a
+6. **Questions, written twice — once to be answered, once to be
+   justified.** Only questions whose answer changes the design or the
+   size. Never ask what the repo already answers, and never repeat a
    question a comment already answered.
+
+   Each question gets two lines, and the order matters because the first
+   is the one that has to travel:
+
+   - **The question itself**, in the language of the person who has to
+     answer it. No file paths, no table or column names, no task numbers,
+     no English identifiers for a Spanish-speaking requester. Someone
+     forwards this line to WhatsApp and it has to make sense alone. Write
+     it so it can be answered out loud, in one breath, without opening
+     anything. If the honest question needs a choice spelled out, spell
+     the options out in their terms — *«¿lo querés en Excel de verdad, o
+     te sirve el archivo simple que ya bajan los otros reportes?»*, not
+     *«¿.xlsx o CSV?»*.
+   - **Why it matters**, for the issue. Here go the paths, the task
+     numbers, the measured risk, what breaks if the answer goes each way.
+     This line is for whoever builds it, not for whoever answers.
+
+   Name the answerer. Split maintainer questions (technical or priority
+   calls, decisions about the repo's own rules) from requester questions
+   (what they actually need, edge cases they have seen). Use this exact
+   shape, because a digest across several issues is built by matching it:
+
+   ```markdown
+   - **Para <nombre> —** <la pregunta, contestable sin abrir nada>
+     _Por qué importa:_ <rutas, números de tarea, riesgo medido>
+   ```
+
+   **Why this is a rule and not a style note.** Measured on 2026-09-19:
+   three analyses produced nine questions for a requester who does not
+   read the repo, every one of them written in repo terms — *«¿son
+   `Department` o `getCategoryUID` de SENAITE?»*. Someone had to
+   translate all nine by hand before they could be asked, and translate
+   the answers back. The analysis was the cheap part of that day; moving
+   the questions was the expensive part.
 7. **Draft the plan task.** Written in the plan's own format and language,
    numbered as the next task of the phase it belongs to (or noting that a
    new phase is needed and why), ready to paste. It cites the issue and
@@ -199,8 +232,10 @@ When invoked on an issue labeled `req:aprobado`:
 **Tamaño y riesgo.** <S|M|L> — <reason>. Riesgo: <…>. Depende de: <…>.
 
 **Preguntas.**
-- Para <maintainer>: …
-- Para <requester>: …
+- **Para <maintainer> —** <pregunta en lenguaje llano, contestable sin abrir el repo>
+  _Por qué importa:_ <rutas, números de tarea, riesgo medido>
+- **Para <requester> —** <pregunta en sus términos, sin rutas ni nombres de tabla>
+  _Por qué importa:_ <…>
 
 **Tarea propuesta para el plan.**
 <the task text in the plan's format, ready to paste>

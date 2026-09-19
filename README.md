@@ -20,6 +20,23 @@ there. Project-specific rules stay in each project.
 
 The repo is public, so no token is involved.
 
+## Las preguntas abiertas, en una sola lista
+
+```
+./tools/preguntas-abiertas.py labsanmartincr/lsm-ai-agents
+./tools/preguntas-abiertas.py <owner/repo> --para Leo
+./tools/preguntas-abiertas.py <owner/repo> --porque
+```
+
+Lee los issues con etiqueta `req:*` y agrupa sus preguntas **por quién las
+contesta**, no por issue. Con un pedido a la vez no hace falta; con cuatro,
+sí — el 2026-09-19, con tres vivos, la pregunta que hubo que hacer fue
+«pasame las preguntas que faltan, se me enredó todo».
+
+Funciona porque la skill exige un formato fijo para cada pregunta (ver el
+paso 6). También lee el formato viejo, sin negritas, para no perder issues
+analizados antes.
+
 ## Use in CI
 
 Copy `templates/requirements-analysis.yml` into a repo's
