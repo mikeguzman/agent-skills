@@ -18,6 +18,20 @@ asks for something the repo's rules forbid, is what saves a week.
 
 ## What to read, in this order
 
+**First, make sure you are reading the branch that is true.** A checkout
+can sit on an old branch for weeks, and its plans and journals are then
+stale in a way nothing announces. Fetch, and read every plan, journal and
+convention file against the **default branch** — `git fetch -q origin`,
+then `git grep <term> origin/main -- docs` and
+`git show origin/main:<path>` — not the working tree. Measured on
+2026-09-19: the search for prior art on a requirement returned *nothing*
+from the working tree, which sat on a months-old branch; the same search
+against `origin/main` found the decision that had already rejected the
+request, quoting the requester's own words. A missing prior-art hit and a
+stale checkout look identical, and the stale one is the expensive
+mistake. (In CI this is already handled — the runner checks out the
+default branch — so it costs nothing to do it the same way everywhere.)
+
 1. `AGENTS.md` and `CLAUDE.md` at the repo root, and any scoped
    `AGENTS.md` under the directories the request touches. These carry the
    rules you will check the request against.
@@ -134,7 +148,11 @@ When invoked on an issue labeled `req:aprobado`:
 ## What not to do
 
 - Do not summarize without searching. An analysis with no prior-art
-  section is not finished.
+  section is not finished, and "I found nothing" is only a finding once
+  you have searched the default branch rather than the working tree.
+- Do not report an empty prior-art search without saying what you
+  searched for — the words, the synonyms, the note ids, the files. A bare
+  "nothing found" cannot be checked by the person reading it.
 - Do not invent scope the requester did not ask for, and do not shrink it
   to what is easy. If part of it is blocked, say which part and why.
 - Do not answer on the requester's behalf. If it depends on what they
