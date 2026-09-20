@@ -190,9 +190,31 @@ When invoked on an issue labeled `req:aprobado`:
 3. Open a pull request on a branch named after the task; never push to
    the default branch. The PR title names the task number; the body links
    the issue. Do not start implementing.
-4. Comment the PR link on the issue, replace `req:aprobado` with
-   `req:en-plan`, and, if the project has a "task in plan" field, note the
-   task number in the comment so the maintainer can fill it.
+
+   **Never write `Closes #N`, `Fixes #N` or `Resolves #N` in that PR.**
+   Merging it means the task reached the plan, not that the requester got
+   anything. Measured on 2026-09-19: a handoff PR carried `Closes`, the
+   merge closed the issue, and a request that was still blocked waiting on
+   server access vanished from the board and from every open-questions
+   listing while it was still pending. Link the issue with a bare URL or
+   `Ref #N` instead. The issue closes when the thing exists, and a person
+   closes it.
+4. Comment the PR link on the issue **naming the task number in the first
+   line** — `req:en-plan` is useless if it does not say *which* task, and
+   the number is how anyone jumps from the request to the plan that now
+   owns its state. Replace `req:aprobado` with `req:en-plan`.
+5. **Flag it if the task cannot be worked yet.** You know which section
+   you wrote it into. If it went to the plan's waiting section (`Esperando`
+   or whatever that plan calls it), also add `req:esperando`, and say in
+   the same comment what it waits on and who owns that — copied from the
+   plan, not invented. If it went to the actionable section, do not add the
+   flag.
+
+   The flag is a pointer, never a second copy: the condition and the owner
+   live once, in the plan's own waiting line. Say where to look; do not
+   restate the reasoning. And nothing removes this flag automatically — it
+   comes off when someone moves the task into the actionable section, in
+   the same change, by hand.
 
 ## What not to do
 

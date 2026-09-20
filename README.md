@@ -37,6 +37,13 @@ Funciona porque la skill exige un formato fijo para cada pregunta (ver el
 paso 6). También lee el formato viejo, sin negritas, para no perder issues
 analizados antes.
 
+Con `--repo-local` y `--plan` también avisa cuando la bandera
+`req:esperando` y el plan dejaron de coincidir — la bandera no se quita
+sola, se levanta cuando alguien mueve la tarea de `Esperando` a `Ahora`, y
+nada vigila eso. Los planes se leen de la **rama por defecto**, no del árbol
+de trabajo: un checkout parado en otra rama produce desfases inventados, y
+eso pasó de verdad el 2026-09-19.
+
 ## Use in CI
 
 Copy `templates/requirements-analysis.yml` into a repo's
