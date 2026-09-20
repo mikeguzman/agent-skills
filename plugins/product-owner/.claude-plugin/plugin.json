@@ -1,5 +1,5 @@
 {
   "name": "product-owner",
   "description": "Requirement analysis for issues that arrive from voice notes: restate, find prior art, check the repo's rules, locate, size, ask only what changes the design, draft the plan task. Handoff of approved issues into the plan.",
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

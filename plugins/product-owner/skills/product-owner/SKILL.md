@@ -187,6 +187,32 @@ When invoked on an issue labeled `req:aprobado`:
    and checkbox in the plan's own style, citing the issue number and the
    source note ids. If the repo's rules say a new phase must be added in
    more than one place (an index file, a phases table), do all of them.
+
+   **Work out the phase number yourself — and do not ask a human for it.**
+   It is arithmetic, not judgement: the highest phase in use, plus one.
+   What takes judgement is whether this opens a new phase at all or joins
+   an existing one, and that you already decided in the analysis.
+
+   Read **three** places, in this order, and take the maximum:
+
+   - every plan of the repo, on the default branch;
+   - every journal, because a closed phase keeps its number forever and
+     numbers are never reused;
+   - **the open pull requests**, because a handoff that has not merged yet
+     is invisible to the first two and is exactly how two requirements end
+     up claiming the same number. Measured on 2026-09-19: two
+     requirements approved minutes apart both wanted phase 39; it only
+     came out right because one of them happened to read the other's
+     issue. Do not rely on happening to notice.
+
+   Say in the PR body which number you took and how you got it — the
+   highest you found, where, and that you checked open PRs. A number with
+   its derivation can be checked in ten seconds by whoever reviews; a bare
+   number cannot.
+
+   If a human already stated a number (in a comment or a project field),
+   use theirs and say so; a person who names a number has a reason you
+   cannot see.
 3. Open a pull request on a branch named after the task; never push to
    the default branch. The PR title names the task number; the body links
    the issue. Do not start implementing.

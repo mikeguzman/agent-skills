@@ -44,6 +44,20 @@ nada vigila eso. Los planes se leen de la **rama por defecto**, no del árbol
 de trabajo: un checkout parado en otra rama produce desfases inventados, y
 eso pasó de verdad el 2026-09-19.
 
+## El próximo número de fase
+
+```
+./tools/siguiente-fase.py ~/Projects/x --repo owner/repo
+```
+
+El más alto en uso más uno, mirando planes, diarios **y PR abiertos**. Ese
+tercero es el que importa: un traspaso sin mergear es invisible en los dos
+primeros, y así es como dos pedidos piden el mismo número. Pasó el
+2026-09-19 y salió bien de casualidad.
+
+La skill se lo calcula sola (paso 2 del traspaso); esto es para verificar
+sin depender del agente.
+
 ## Use in CI
 
 Copy `templates/requirements-analysis.yml` into a repo's
