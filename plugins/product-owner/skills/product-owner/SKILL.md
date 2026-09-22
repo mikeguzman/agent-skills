@@ -229,6 +229,17 @@ When invoked on an issue labeled `req:aprobado`:
    line** — `req:en-plan` is useless if it does not say *which* task, and
    the number is how anyone jumps from the request to the plan that now
    owns its state. Replace `req:aprobado` with `req:en-plan`.
+
+   **Then put the task number in the issue title**, as a leading
+   `[39.1] ` prefix (several tasks: `[39.2, 40.2] `). The title is what a
+   Project card shows, so this is what makes the board answer "which task
+   is this?" without opening anything. Keep the rest of the title exactly
+   as it was — this is the one edit to the title the method allows, and
+   only at handoff. And write the issue number in the plan task's own
+   title line, right after the dash: `**39.1 — #189 · Vista de…**`. After
+   the dash, not before it: every parser in the target repo anchors up to
+   `**n.n —` and treats the rest as text. The `(issue #N` citation stays
+   in the prose as well; that one is for the machines.
 5. **Flag it if the task cannot be worked yet.** You know which section
    you wrote it into. If it went to the plan's waiting section (`Esperando`
    or whatever that plan calls it), also add `req:esperando`, and say in
@@ -256,7 +267,8 @@ When invoked on an issue labeled `req:aprobado`:
   meant, it is a question for them.
 - Do not decide. The recommendation is yours; the decision is a label the
   maintainer sets.
-- Do not edit the requirement section, the title, or other people's
+- Do not edit the requirement section, the title (except the `[n.n]`
+  prefix the handoff adds, step 4), or other people's
   comments. Do not replace the body wholesale — splice your section into
   it. A body write that does not carry the requirement section forward
   unchanged is a bug, whatever else it got right.
