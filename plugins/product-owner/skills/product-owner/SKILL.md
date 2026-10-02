@@ -240,6 +240,25 @@ When invoked on an issue labeled `req:aprobado`:
    the dash, not before it: every parser in the target repo anchors up to
    `**n.n —` and treats the rest as text. The `(issue #N` citation stays
    in the prose as well; that one is for the machines.
+
+   **Write the machine-read forms character for character.** A form that
+   reads right to a person but not to the parser is a silent failure:
+   - The citation is a parenthesis that opens with `issue #N`:
+     «Pedido de Leo (issue #284, `voicenotes:…`)». Not «por el issue
+     #433», not «del #433» — measured 2026-10-02 in the LSM repo, where
+     «por el issue #433» left the board's task field empty.
+   - A waiting item carries the two labels exactly as the plan's own
+     waiting items do, bold and with the colon: `**Espera:**` and
+     `**Dueño:**`. «**Espera** a la 37.26… Dueño: Maikol» failed the plan
+     check the same day, and the handoff never merged.
+
+   **Then run the repo's own plan checks before you commit**, and fix every
+   failure. Find them where the repo's CI runs them on plan changes (in the
+   LSM repo: `scripts/check_plan_shape.py`,
+   `scripts/check_changelog_citations.py`, and `python3 -m unittest discover
+   -s scripts/tests -t scripts`). A handoff that fails them is never merged
+   automatically, so it sits in `req:en-plan` with no task on the default
+   branch — a state that lies to everyone reading the board.
 5. **Flag it if the task cannot be worked yet.** You know which section
    you wrote it into. If it went to the plan's waiting section (`Esperando`
    or whatever that plan calls it), also add `req:esperando`, and say in
